@@ -1,0 +1,589 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Airline Booking System</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f0f2f5;
+        }
+        
+        .navbar {
+            background: #2563eb;
+            color: white;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .navbar a {
+            color: white;
+            text-decoration: none;
+            margin-left: 1.5rem;
+            cursor: pointer;
+        }
+        
+        .navbar a:hover {
+            color: #bfdbfe;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+        }
+        
+        .card {
+            background: white;
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .flight-card {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.5rem;
+            border-bottom: 1px solid #e5e7eb;
+        }
+        
+        .flight-card:hover {
+            background: #f9fafb;
+        }
+        
+        input, button {
+            padding: 0.5rem 1rem;
+            border: 1px solid #d1d5db;
+            border-radius: 4px;
+            font-size: 1rem;
+        }
+        
+        button {
+            background: #2563eb;
+            color: white;
+            cursor: pointer;
+            border: none;
+        }
+        
+        button:hover {
+            background: #1d4ed8;
+        }
+        
+        .form-group {
+            margin-bottom: 1rem;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+        }
+        
+        .form-group input {
+            width: 100%;
+            padding: 0.5rem;
+        }
+        
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1rem;
+        }
+        
+        .price {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #2563eb;
+        }
+        
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: #333;
+            color: white;
+            padding: 12px 24px;
+            border-radius: 8px;
+            z-index: 1000;
+            animation: slideIn 0.3s ease;
+        }
+        
+        @keyframes slideIn {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+        
+        .toast.success { background: #10b981; }
+        .toast.error { background: #ef4444; }
+        .hidden { display: none; }
+        
+        .booking-card {
+            background: white;
+            border-radius: 8px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            border-left: 4px solid #2563eb;
+        }
+        
+        h2 {
+            margin-bottom: 1rem;
+            color: #1f2937;
+        }
+        
+        .welcome-section {
+            text-align: center;
+            padding: 3rem;
+        }
+        
+        .welcome-section h1 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+        
+        .btn-large {
+            padding: 0.75rem 2rem;
+            font-size: 1.1rem;
+            margin-top: 1rem;
+        }
+        
+        .flight-info {
+            flex: 1;
+        }
+        
+        .flight-times {
+            text-align: center;
+            min-width: 100px;
+        }
+        
+        .flight-route {
+            font-size: 1.2rem;
+            font-weight: bold;
+        }
+        
+        @media (max-width: 768px) {
+            .flight-card {
+                flex-direction: column;
+                gap: 1rem;
+                text-align: center;
+            }
+            .navbar {
+                flex-direction: column;
+                gap: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <h1>✈️ Airline System</h1>
+        <div>
+            <a onclick="showPage('home')">Home</a>
+            <a onclick="showPage('flights')">Flights</a>
+            <span id="authLinks">
+                <a onclick="showPage('login')">Login</a>
+                <a onclick="showPage('register')">Register</a>
+            </span>
+            <span id="userLinks" class="hidden">
+                <a onclick="showPage('bookings')">My Bookings</a>
+                <a onclick="logout()">Logout</a>
+            </span>
+        </div>
+    </nav>
+
+    <div class="container">
+        <!-- Home Page -->
+        <div id="homePage">
+            <div class="card welcome-section">
+                <h1>Welcome to Airline System</h1>
+                <p style="margin: 1rem 0; color: #6b7280;">Book flights, manage bookings, and check-in online</p>
+                <button class="btn-large" onclick="showPage('flights')">Search Flights</button>
+            </div>
+            
+            <div class="grid">
+                <div class="card">
+                    <h3>✈️ Easy Booking</h3>
+                    <p>Search and book flights in minutes</p>
+                </div>
+                <div class="card">
+                    <h3>💰 Best Prices</h3>
+                    <p>Get the best deals on flights</p>
+                </div>
+                <div class="card">
+                    <h3>🎫 Instant Confirmation</h3>
+                    <p>Receive booking confirmation instantly</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Login Page -->
+        <div id="loginPage" class="hidden">
+            <div class="card" style="max-width: 400px; margin: 0 auto;">
+                <h2>Login to Your Account</h2>
+                <div class="form-group">
+                    <label>Email Address</label>
+                    <input type="email" id="loginEmail" placeholder="Enter your email">
+                </div>
+                <div class="form-group">
+                    <label>Password</label>
+                    <input type="password" id="loginPassword" placeholder="Enter your password">
+                </div>
+                <button onclick="login()" style="width: 100%;">Login</button>
+                <p style="margin-top: 1rem; text-align: center;">
+                    Don't have an account? <a onclick="showPage('register')" style="color: #2563eb; cursor: pointer;">Register here</a>
+                </p>
+            </div>
+        </div>
+
+        <!-- Register Page -->
+        <div id="registerPage" class="hidden">
+            <div class="card" style="max-width: 400px; margin: 0 auto;">
+                <h2>Create an Account</h2>
+                <div class="form-group">
+                    <label>First Name</label>
+                    <input type="text" id="regFirstName" placeholder="First name">
+                </div>
+                <div class="form-group">
+                    <label>Last Name</label>
+                    <input type="text" id="regLastName" placeholder="Last name">
+                </div>
+                <div class="form-group">
+                    <label>Email Address</label>
+                    <input type="email" id="regEmail" placeholder="Email address">
+                </div>
+                <div class="form-group">
+                    <label>Phone Number</label>
+                    <input type="tel" id="regPhone" placeholder="Phone number">
+                </div>
+                <div class="form-group">
+                    <label>Password</label>
+                    <input type="password" id="regPassword" placeholder="Create a password (min 6 characters)">
+                </div>
+                <button onclick="register()" style="width: 100%;">Register</button>
+                <p style="margin-top: 1rem; text-align: center;">
+                    Already have an account? <a onclick="showPage('login')" style="color: #2563eb; cursor: pointer;">Login here</a>
+                </p>
+            </div>
+        </div>
+
+        <!-- Flights Page -->
+        <div id="flightsPage" class="hidden">
+            <div class="card">
+                <h2>Search Flights</h2>
+                <div class="grid">
+                    <input type="text" id="searchOrigin" placeholder="From (e.g., Delhi, Mumbai)">
+                    <input type="text" id="searchDestination" placeholder="To (e.g., Mumbai, Bangalore)">
+                    <button onclick="searchFlights()">Search Flights</button>
+                </div>
+            </div>
+            <div id="flightsList"></div>
+        </div>
+
+        <!-- Bookings Page -->
+        <div id="bookingsPage" class="hidden">
+            <h2>My Bookings</h2>
+            <div id="bookingsList"></div>
+        </div>
+    </div>
+
+    <div id="toast" class="toast hidden"></div>
+
+    <script>
+        const API_URL = 'http://localhost:5000/api';
+        let currentUser = null;
+
+        // Check if user is logged in
+        function checkAuth() {
+            const token = localStorage.getItem('token');
+            const user = localStorage.getItem('user');
+            if (token && user) {
+                currentUser = JSON.parse(user);
+                document.getElementById('authLinks').classList.add('hidden');
+                document.getElementById('userLinks').classList.remove('hidden');
+                // Show username if needed
+                console.log('Logged in as:', currentUser.email);
+            } else {
+                document.getElementById('authLinks').classList.remove('hidden');
+                document.getElementById('userLinks').classList.add('hidden');
+            }
+        }
+
+        // Show toast message
+        function showToast(message, type = 'success') {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.className = `toast ${type}`;
+            toast.classList.remove('hidden');
+            setTimeout(() => {
+                toast.classList.add('hidden');
+            }, 3000);
+        }
+
+        // Show page
+        function showPage(page) {
+            const pages = ['homePage', 'loginPage', 'registerPage', 'flightsPage', 'bookingsPage'];
+            pages.forEach(p => {
+                const element = document.getElementById(p);
+                if (element) element.classList.add('hidden');
+            });
+            document.getElementById(page).classList.remove('hidden');
+            
+            if (page === 'flightsPage') searchFlights();
+            if (page === 'bookingsPage') loadBookings();
+        }
+
+        // Register
+        async function register() {
+            const data = {
+                email: document.getElementById('regEmail').value,
+                password: document.getElementById('regPassword').value,
+                firstName: document.getElementById('regFirstName').value,
+                lastName: document.getElementById('regLastName').value,
+                phone: document.getElementById('regPhone').value
+            };
+            
+            if (!data.email || !data.password || !data.firstName || !data.lastName) {
+                showToast('Please fill in all fields', 'error');
+                return;
+            }
+            
+            if (data.password.length < 6) {
+                showToast('Password must be at least 6 characters', 'error');
+                return;
+            }
+            
+            try {
+                const response = await fetch(`${API_URL}/auth/register`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+                const result = await response.json();
+                if (result.success) {
+                    localStorage.setItem('token', result.token);
+                    localStorage.setItem('user', JSON.stringify(result.user));
+                    checkAuth();
+                    showToast('Registration successful! Welcome aboard! ✈️');
+                    showPage('homePage');
+                    // Clear form
+                    document.getElementById('regEmail').value = '';
+                    document.getElementById('regPassword').value = '';
+                    document.getElementById('regFirstName').value = '';
+                    document.getElementById('regLastName').value = '';
+                    document.getElementById('regPhone').value = '';
+                } else {
+                    showToast(result.message || 'Registration failed', 'error');
+                }
+            } catch (error) {
+                console.error(error);
+                showToast('Error connecting to server', 'error');
+            }
+        }
+
+        // Login
+        async function login() {
+            const data = {
+                email: document.getElementById('loginEmail').value,
+                password: document.getElementById('loginPassword').value
+            };
+            
+            if (!data.email || !data.password) {
+                showToast('Please enter email and password', 'error');
+                return;
+            }
+            
+            try {
+                const response = await fetch(`${API_URL}/auth/login`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+                const result = await response.json();
+                if (result.success) {
+                    localStorage.setItem('token', result.token);
+                    localStorage.setItem('user', JSON.stringify(result.user));
+                    checkAuth();
+                    showToast(`Welcome back, ${result.user.firstName}! ✈️`);
+                    showPage('homePage');
+                    // Clear form
+                    document.getElementById('loginEmail').value = '';
+                    document.getElementById('loginPassword').value = '';
+                } else {
+                    showToast(result.message || 'Invalid credentials', 'error');
+                }
+            } catch (error) {
+                console.error(error);
+                showToast('Error connecting to server', 'error');
+            }
+        }
+
+        // Logout
+        function logout() {
+            localStorage.removeItem('token');
+            localStorage.removeItem('user');
+            currentUser = null;
+            checkAuth();
+            showToast('Logged out successfully');
+            showPage('homePage');
+        }
+
+        // Search flights
+        async function searchFlights() {
+            const origin = document.getElementById('searchOrigin').value;
+            const destination = document.getElementById('searchDestination').value;
+            
+            let url = `${API_URL}/flights/search`;
+            const params = new URLSearchParams();
+            if (origin) params.append('origin', origin);
+            if (destination) params.append('destination', destination);
+            if (params.toString()) url += '?' + params.toString();
+            
+            try {
+                const response = await fetch(url);
+                const result = await response.json();
+                if (result.success) {
+                    displayFlights(result.flights);
+                } else {
+                    showToast('Error fetching flights', 'error');
+                }
+            } catch (error) {
+                console.error(error);
+                showToast('Error connecting to server', 'error');
+            }
+        }
+
+        // Display flights
+        function displayFlights(flights) {
+            const container = document.getElementById('flightsList');
+            if (!flights || flights.length === 0) {
+                container.innerHTML = '<div class="card">No flights found. Try different search criteria.</div>';
+                return;
+            }
+            
+            container.innerHTML = flights.map(flight => `
+                <div class="card flight-card">
+                    <div class="flight-info">
+                        <strong style="font-size: 1.1rem;">${flight.airline}</strong><br>
+                        <small style="color: #6b7280;">${flight.flightNumber}</small>
+                        <div style="margin-top: 0.5rem;">
+                            <span class="flight-route">${flight.origin.code}</span> → 
+                            <span class="flight-route">${flight.destination.code}</span>
+                        </div>
+                    </div>
+                    <div class="flight-times">
+                        <div><strong>${new Date(flight.departureTime).toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'})}</strong></div>
+                        <small style="color: #6b7280;">${flight.origin.city}</small>
+                    </div>
+                    <div class="flight-times">
+                        <div><strong>${new Date(flight.arrivalTime).toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'})}</strong></div>
+                        <small style="color: #6b7280;">${flight.destination.city}</small>
+                    </div>
+                    <div class="price">$${flight.price}</div>
+                    <button onclick="bookFlight(${flight.id}, ${flight.price})">Book Now</button>
+                </div>
+            `).join('');
+        }
+
+        // Book flight
+        async function bookFlight(flightId, price) {
+            const token = localStorage.getItem('token');
+            if (!token) {
+                showToast('Please login to book flights', 'error');
+                showPage('loginPage');
+                return;
+            }
+            
+            // Get user info for passenger
+            const user = JSON.parse(localStorage.getItem('user'));
+            
+            const bookingData = {
+                flightId: flightId,
+                passengers: [{
+                    firstName: user.firstName,
+                    lastName: user.lastName,
+                    seatNumber: Math.floor(Math.random() * 50) + 1 + String.fromCharCode(65 + Math.floor(Math.random() * 6))
+                }],
+                totalAmount: price
+            };
+            
+            try {
+                const response = await fetch(`${API_URL}/bookings`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'x-auth-token': token
+                    },
+                    body: JSON.stringify(bookingData)
+                });
+                const result = await response.json();
+                if (result.success) {
+                    showToast(`✓ Booking confirmed! Reference: ${result.booking.bookingReference}`);
+                    loadBookings();
+                } else {
+                    showToast('Booking failed. Please try again.', 'error');
+                }
+            } catch (error) {
+                console.error(error);
+                showToast('Error booking flight', 'error');
+            }
+        }
+
+        // Load bookings
+        async function loadBookings() {
+            const token = localStorage.getItem('token');
+            if (!token) return;
+            
+            try {
+                const response = await fetch(`${API_URL}/bookings/my-bookings`, {
+                    headers: { 'x-auth-token': token }
+                });
+                const bookings = await response.json();
+                displayBookings(bookings);
+            } catch (error) {
+                console.error('Error loading bookings:', error);
+                document.getElementById('bookingsList').innerHTML = '<div class="card">Error loading bookings</div>';
+            }
+        }
+
+        // Display bookings
+        function displayBookings(bookings) {
+            const container = document.getElementById('bookingsList');
+            if (!bookings || bookings.length === 0) {
+                container.innerHTML = '<div class="card">No bookings found. Book your first flight! ✈️</div>';
+                return;
+            }
+            
+            container.innerHTML = bookings.map(booking => `
+                <div class="booking-card">
+                    <p><strong>Booking Reference:</strong> ${booking.bookingReference}</p>
+                    <p><strong>Flight ID:</strong> ${booking.flightId}</p>
+                    <p><strong>Total Amount:</strong> <span class="price">$${booking.totalAmount}</span></p>
+                    <p><strong>Status:</strong> <span style="color: #10b981;">${booking.status.toUpperCase()}</span></p>
+                    <p><strong>Booked on:</strong> ${new Date(booking.bookingDate).toLocaleDateString()}</p>
+                </div>
+            `).join('');
+        }
+
+        // Initialize
+        checkAuth();
+        showPage('homePage');
+    </script>
+</body>
+</html>
